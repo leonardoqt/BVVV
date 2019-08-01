@@ -94,6 +94,13 @@ void cell :: gen_nei_list()
 }
 //*/
 
+void cell :: retrive_nei(int ind, int& type, vector<int>& type2, vector<vec>& pos)
+{
+	type = type_atom[ind];
+	type2 = list_nei[ind];
+	pos = pos_nei[ind];
+}
+
 void cell :: print()
 {
 	cout<<"Cell parameter     : "<<endl<<param[0]<<endl<<param[1]<<endl<<param[2]<<endl;

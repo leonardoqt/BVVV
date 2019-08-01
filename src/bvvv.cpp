@@ -1,7 +1,13 @@
+#include <cmath>
 #include "bvvv.h"
 
 void bvvv :: init(int Num_ele, vector<int>& N_max)
 {
+	if(Num_ele != N_max.size())
+	{
+		cout<<"Error in bvvv initialization, wrong number of n_max for each element"<<endl;
+		exit(EXIT_FAILURE);
+	}
 	num_ele = Num_ele;
 	n_max.resize(Num_ele);
 	alpha.resize(Num_ele);
@@ -29,33 +35,69 @@ void bvvv :: init(int Num_ele, vector<int>& N_max)
 
 void bvvv :: assign(int Ele, double Alpha, double Beta, double Gamma, double Delta, vector<double>& N_b, vector<double>& R_b, vector<double>& L_b, vector<double>& Theta_b, vector<double>& Phi_b)
 {
+	// guard
 	if (Ele >= num_ele)
 	{
 		cout<<"Error in assignment, invalid element index "<<Ele<<endl;
 		exit(EXIT_FAILURE);
 	}
+	//
+	alpha[Ele] = Alpha;
+	beta[Ele]  = Beta;
+	gamma[Ele] = Gamma;
+	delta[Ele] = Delta;
+	if (N_b.size()!=num_ele || R_b.size()!=num_ele || L_b.size()!=num_ele || Theta_b.size()!=n_max[Ele] || Phi_b.size()!=n_max[Ele])
+	{
+		cout<<"Error in assignemnt, wrong length of paired parameters"<<endl;
+		exit(EXIT_FAILURE);
+	}
 	else
 	{
-		alpha[Ele] = Alpha;
-		beta[Ele]  = Beta;
-		gamma[Ele] = Gamma;
-		delta[Ele] = Delta;
-		if (N_b.size()!=num_ele || R_b.size()!=num_ele || L_b.size()!=num_ele || Theta_b.size()!=n_max[Ele] || Phi_b.size()!=n_max[Ele])
-		{
-			cout<<"Error in assignemnt, wrong length of paired parameters"<<endl;
-			exit(EXIT_FAILURE);
-		}
-		else
-		{
-			n_b[Ele] = N_b;
-			r_b[Ele] = R_b;
-			l_b[Ele] = L_b;
-			theta_b[Ele] = Theta_b;
-			phi_b[Ele] = Phi_b;
-		}
+		n_b[Ele] = N_b;
+		r_b[Ele] = R_b;
+		l_b[Ele] = L_b;
+		theta_b[Ele] = Theta_b;
+		phi_b[Ele] = Phi_b;
 	}
+	
 }
 
+double bvvv :: ene(int ele0, vector<int>& ele1, vector<vec>& bond)
+{
+	if(ele1.size() != bond.size())
+	{
+		cout<<"Error in calculating energy, number of atoms not consistent"<<endl;
+		exit(EXIT_FAILURE);
+	}
+	int num = ele1.size();
+	vector <double> n_j(num);
+	vec ww,ww0,tmp;
+	double sum_n, theta, phi;
+	double etot=0;
+	// n_j, n, ww
+	ww = 0.0;
+	sum_n = 0;
+	for(size_t t1=0; t1<num; t1++)
+	{
+		n_j[t1] = n_b[ele0][ele1[t1]]*exp(-pow(bond[t1].norm()/r_b[ele0][ele1[t1]],fabs(l_b[ele0][ele1[t1]])));
+		sum_n += n_j[t1];
+		ww = ww + bond[t1]*n_j[t1];
+	}
+	// ww0
+	ww0 = 0.0;
+	for(size_t t1=0; t1<n_max[ele0]; t1++)
+	{
+		theta = M_PI*theta_b[ele0][t1];
+		phi = 2*M_PI*phi_b[ele0][t1];
+		tmp[0] = sin(theta)*cos(phi);
+		tmp[1] = sin(theta)*sin(phi);
+		tmp[2] = cos(theta);
+		ww0 = ww0 + tmp*((1+tanh(4*(sum_n-0.5-t1)))/2);
+	}
+	// ene
+	etot = alpha[ele0]*pow(sum_n-n_max[ele0],2)+beta[ele0]*pow(sin(M_PI*sum_n),2)+gamma[ele0]*pow(ww.norm() - delta[ele0]*ww0.norm(),2);
+	return etot;
+}
 
 void bvvv :: print()
 {

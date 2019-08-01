@@ -38,7 +38,7 @@ int main()
 	//
 	sys1.gen_nei_list();
 //	sys1.print();
-	//--------------------------BVVV test-------------------------
+	//---------------------BVVV assignment test----------------------
 	bvvv model1;
 	vector<int> n_max(num_ele);
 	vector<double> c1(num_ele),c2(num_ele),c3(num_ele),d1,d2;
@@ -49,19 +49,25 @@ int main()
 	{
 		for(size_t t2=0; t2<num_ele; t2++)
 		{
-			c1[t2] = t1+t2;
-			c2[t2] = t1+2*t2;
-			c3[t2] = t1+3*t2;
+			c1[t2] = t1+1.0*t2;
+			c2[t2] = t1+2.0*t2;
+			c3[t2] = t1+3.0*t2;
 		}
 		d1.resize(n_max[t1]);
 		d2.resize(n_max[t1]);
 		for(size_t t2=0; t2<n_max[t1]; t2++)
 		{
-			d1[t2] = t1+4*t2;
-			d2[t2] = t1+5*t2;
+			d1[t2] = t1+0.4*t2;
+			d2[t2] = t1+0.5*t2;
 		}
 		model1.assign(t1,t1+1,t1+2,t1+3,t1+4,c1,c2,c3,d1,d2);
 	}
 	model1.print();
+	//-----------------------BVVV ene test-----------------------
+	int e_t;
+	vector<int> e_t2;
+	vector<vec> p_t;
+	sys1.retrive_nei(0,e_t,e_t2,p_t);
+	model1.ene(e_t,e_t2,p_t);
 	return 0;
 }

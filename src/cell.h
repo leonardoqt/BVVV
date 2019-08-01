@@ -27,6 +27,7 @@ public:
 	void read_param(vec Param[3]);
 	void read_atom_pos(int ind, int type, vec& pos);
 	void gen_nei_list();
+	void retrive_nei(int ind, int& type, vector<int>& type2, vector<vec>& pos);
 	
 	void print();
 };

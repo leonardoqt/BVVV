@@ -8,7 +8,7 @@ Energy for BVVV
 E_i = alpha_i*(n_i-n_max_i)^2 + beta_i*sin(pi*n_i)^2 + gamma_i*(|W_i| - delta_i*|sum_m f_m(n_i)*e_im|)^2
 
 n_i      =  sum_j n_ij
-n_ij     =  n_b_ij*e^(-(|r_ij|/|r_b_ij|)^l_b_ij)
+n_ij     =  n_b_ij*e^(-(|r_ij|/r_b_ij)^l_b_ij)
 W_i      =  sum_j n_ij*r_ij
 f_m(n_i) =  tanh(4(n_i+0.5-m))
 e_im     -> (theta_b_im, phi_b_im)
@@ -39,7 +39,7 @@ private:
 public:
 	void init(int Num_ele, vector<int>& N_max);
 	void assign(int Ele, double Alpha, double Beta, double Gamma, double Delta, vector<double>& N_b, vector<double>& R_b, vector<double>& L_b, vector<double>& Theta_b, vector<double>& Phi_b);
-	void ene(int ele0, vector<int>& ele1, vector<vec>& bond);
+	double ene(int ele0, vector<int>& ele1, vector<vec>& bond);
 
 	void print();
 };
