@@ -13,11 +13,12 @@ W_i      =  sum_j n_ij*r_ij
 f_m(n_i) =  tanh(4(n_i+0.5-m))
 e_im     -> (theta_b_im, phi_b_im)
 
-i,j are index of atoms, but different element(pairs) have the same coefficient
+i,j are index of atoms, but different element (pairs) have the same coefficient, so only need to store for different element (pairs)
 
 */
 
 #include <vector>
+#include <vec.h>
 
 using namespace std;
 
@@ -37,5 +38,9 @@ private:
 	vector < vector <double> > phi_b;
 public:
 	void init(int Num_ele, vector<int>& N_max);
+	void assign(int Ele, double Alpha, double Beta, double Gamma, double Delta, vector<double>& N_b, vector<double>& R_b, vector<double>& L_b, vector<double>& Theta_b, vector<double>& Phi_b);
+	void ene(int ele0, vector<int>& ele1, vector<vec>& bond);
+
+	void print();
 };
 #endif
