@@ -49,9 +49,9 @@ int main()
 	{
 		for(size_t t2=0; t2<num_ele; t2++)
 		{
-			c1[t2] = t1+1.0*t2;
-			c2[t2] = t1+2.0*t2;
-			c3[t2] = t1+3.0*t2;
+			c1[t2] = t1+1+1.0*t2;
+			c2[t2] = t1+1+2.0*t2;
+			c3[t2] = t1+1+3.0*t2;
 		}
 		d1.resize(n_max[t1]);
 		d2.resize(n_max[t1]);
@@ -60,14 +60,30 @@ int main()
 			d1[t2] = t1+0.4*t2;
 			d2[t2] = t1+0.5*t2;
 		}
-		model1.assign(t1,t1+1,t1+2,t1+3,t1+4,c1,c2,c3,d1,d2);
+		if(t1 == 1)
+		{
+			c1[2] = 1;
+			c2[2] = 2/1.18232155679;
+			c3[2] = 1;
+			d1[0] = 0;
+			d1[1] = 1;
+			d1[2] = d1[3] = d1[4] = d1[5] = 0.5;
+			d2[0] = d2[1] = d2[2] = 0;
+			d2[3] = 0.25;
+			d2[4] = 0.5;
+			d2[5] = 0.75;
+			model1.assign(1,0,0,1,1,c1,c2,c3,d1,d2);
+		}
+		else
+			model1.assign(t1,t1+1,t1+2,t1+3,t1+4,c1,c2,c3,d1,d2);
 	}
 	model1.print();
 	//-----------------------BVVV ene test-----------------------
 	int e_t;
 	vector<int> e_t2;
 	vector<vec> p_t;
-	sys1.retrive_nei(0,e_t,e_t2,p_t);
-	model1.ene(e_t,e_t2,p_t);
+	sys1.retrive_nei(1,e_t,e_t2,p_t);
+	cout<<model1.ene(e_t,e_t2,p_t)<<endl;
+	//sys1.get_ene_bvvv(model1);
 	return 0;
 }

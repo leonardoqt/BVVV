@@ -17,6 +17,7 @@ void cell :: init(int Num_ele, vector<int> Num_atom, double Nei_r_max)
 	type_atom.resize(num_atom);
 	num_nei.resize(num_atom,0);
 	list_nei.resize(num_atom);
+	ele_nei.resize(num_atom);
 	pos_nei.resize(num_atom);
 	nei_r_max = Nei_r_max;
 }
@@ -55,9 +56,11 @@ void cell :: gen_nei_list()
 		{
 			num_nei[t1]++;
 			list_nei[t1].push_back(t2);
+			ele_nei[t1].push_back(type_atom[t2]);
 			pos_nei[t1].push_back(dr);
 			num_nei[t2]++;
 			list_nei[t2].push_back(t1);
+			ele_nei[t2].push_back(type_atom[t1]);
 			pos_nei[t2].push_back(dr*(-1));
 		}
 	}
@@ -85,9 +88,11 @@ void cell :: gen_nei_list()
 		{
 			num_nei[t1]++;
 			list_nei[t1].push_back(t2);
+			ele_nei[t1].push_back(type_atom[t2]);
 			pos_nei[t1].push_back(dr);
 			num_nei[t2]++;
 			list_nei[t2].push_back(t1);
+			ele_nei[t2].push_back(type_atom[t1]);
 			pos_nei[t2].push_back(dr*(-1));
 		}
 	}
@@ -97,8 +102,23 @@ void cell :: gen_nei_list()
 void cell :: retrive_nei(int ind, int& type, vector<int>& type2, vector<vec>& pos)
 {
 	type = type_atom[ind];
-	type2 = list_nei[ind];
+	type2 = ele_nei[ind];
 	pos = pos_nei[ind];
+}
+
+void cell :: assign_ene_dft(double Ene_dft)
+{
+	ene_dft = Ene_dft;
+}
+
+void cell :: get_ene_bvvv(bvvv& model)
+{
+	ene_bvvv = 0;
+	for(size_t t1=0; t1<num_atom; t1++)
+	{
+		ene_bvvv += model.ene(type_atom[t1],ele_nei[t1],pos_nei[t1]);
+		cout<<t1<<'\t'<<ene_bvvv<<endl;
+	}
 }
 
 void cell :: print()
@@ -115,6 +135,6 @@ void cell :: print()
 	{
 		cout<<"    Atom "<<setw(4)<<t1+1<<", number of neighbors: "<<num_nei[t1]<<endl;
 		for(size_t t2=0; t2<num_nei[t1]; t2++)
-			cout<<"        "<<setw(4)<<list_nei[t1][t2]+1<<pos_nei[t1][t2]<<endl;
+			cout<<"        "<<setw(4)<<list_nei[t1][t2]+1<<" ele "<<ele_nei[t1][t2]<<pos_nei[t1][t2]<<endl;
 	}
 }

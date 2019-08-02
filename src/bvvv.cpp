@@ -79,9 +79,10 @@ double bvvv :: ene(int ele0, vector<int>& ele1, vector<vec>& bond)
 	sum_n = 0;
 	for(size_t t1=0; t1<num; t1++)
 	{
-		n_j[t1] = n_b[ele0][ele1[t1]]*exp(-pow(bond[t1].norm()/r_b[ele0][ele1[t1]],fabs(l_b[ele0][ele1[t1]])));
+		n_j[t1] = n_b[ele0][ele1[t1]]*exp(1-pow(bond[t1].norm()/fabs(r_b[ele0][ele1[t1]]),fabs(l_b[ele0][ele1[t1]])));
 		sum_n += n_j[t1];
 		ww = ww + bond[t1]*n_j[t1];
+		//cout<<bond[t1]<<'\t'<<ele1[t1]<<'\t'<<'\t'<<'\t'<<n_j[t1]<<endl;
 	}
 	// ww0
 	ww0 = 0.0;
@@ -94,6 +95,7 @@ double bvvv :: ene(int ele0, vector<int>& ele1, vector<vec>& bond)
 		tmp[2] = cos(theta);
 		ww0 = ww0 + tmp*((1+tanh(4*(sum_n-0.5-t1)))/2);
 	}
+	//cout<<"W"<<ww<<"\tW0"<<ww0<<endl;
 	// ene
 	etot = alpha[ele0]*pow(sum_n-n_max[ele0],2)+beta[ele0]*pow(sin(M_PI*sum_n),2)+gamma[ele0]*pow(ww.norm() - delta[ele0]*ww0.norm(),2);
 	return etot;
