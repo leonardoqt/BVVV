@@ -10,6 +10,19 @@ using namespace std;
 int main()
 {
 	ifstream in;
+	cell sys[1011];
+	in.open("example.xsf");
+	for(size_t t1=0; t1<1011; t1++)
+	{
+		sys[t1].init(2,3.5);
+		sys[t1].read_datafile(in);
+		sys[t1].gen_nei_list();
+	}
+	sys[1010].print();
+	return 0;
+	//----------------------cell assignement test-------------------------
+	/*
+	ifstream in;
 	vec param[3];
 	int num_ele;
 	vector<int> num_atom;
@@ -38,7 +51,9 @@ int main()
 	//
 	sys1.gen_nei_list();
 //	sys1.print();
+	*/
 	//---------------------BVVV assignment test----------------------
+	/*
 	bvvv model1;
 	vector<int> n_max(num_ele);
 	vector<double> c1(num_ele),c2(num_ele),c3(num_ele),d1,d2;
@@ -78,12 +93,15 @@ int main()
 			model1.assign(t1,t1+1,t1+2,t1+3,t1+4,c1,c2,c3,d1,d2);
 	}
 	model1.print();
+	*/
 	//-----------------------BVVV ene test-----------------------
+	/*
 	int e_t;
 	vector<int> e_t2;
 	vector<vec> p_t;
 	sys1.retrive_nei(1,e_t,e_t2,p_t);
 	cout<<model1.ene(e_t,e_t2,p_t)<<endl;
-	//sys1.get_ene_bvvv(model1);
+	sys1.get_ene_bvvv(model1);
+	*/
 	return 0;
 }

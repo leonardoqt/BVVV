@@ -1,6 +1,7 @@
 #ifndef __CELL__
 #define __CELL__
 
+#include <fstream>
 #include <vec.h>
 #include <vector>
 #include "bvvv.h"
@@ -27,8 +28,10 @@ public:
 	double ene_bvvv, ene_dft;
 	// interface related (will change for real code)
 	void init(int Num_ele, vector<int> Num_atom, double Nei_r_max);
+	void init(int Num_ele, double Nei_r_max);
 	void read_param(vec Param[3]);
 	void read_atom_pos(int ind, int type, vec& pos);
+	void read_datafile(ifstream& in);
 	void gen_nei_list();
 	void retrive_nei(int ind, int& type, vector<int>& type2, vector<vec>& pos);
 	void assign_ene_dft(double Ene_dft);
