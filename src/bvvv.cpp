@@ -103,6 +103,96 @@ double bvvv :: ene(int ele0, vector<int>& ele1, vector<vec>& bond)
 	return etot;
 }
 
+void bvvv :: init_param_to_mc(vector< vector<double> >& p_mc)
+{
+	// classes of parameters are:
+	/*
+		0 self_i
+		1 alpha_i, beta_i, gamma_i
+		2 delta_i
+		3 n_b_ij = n_b_ji
+		4 r_b_ij = r_b_ji
+		5 l_b_ij = l_b_ji
+		5+1 theta_b_i1m
+		5+n theta_b_i2m ...
+		5+n+1 phi_b_i1m
+		5+n+n phi_b_i2m ...
+	*/
+	int num_param_tmp = 6+2*(num_ele);
+	
+	p_mc.resize(num_param_tmp);
+	p_mc[0].resize(num_ele);
+	p_mc[1].resize(3*num_ele);
+	p_mc[2].resize(num_ele);
+	p_mc[3].resize((num_ele*(num_ele+1))/2);
+	p_mc[4].resize((num_ele*(num_ele+1))/2);
+	p_mc[5].resize((num_ele*(num_ele+1))/2);
+	for(size_t t1=0; t1<num_ele; t1++)
+		p_mc[6+t1].resize(n_max[t1]);
+	for(size_t t1=0; t1<num_ele; t1++)
+		p_mc[6+num_ele+t1].resize(n_max[t1]);
+}
+
+void bvvv :: send_param_to_mc(vector< vector<double> >& p_mc)
+{
+	// single site parameters
+	for(size_t t1=0; t1<num_ele; t1++)
+	{
+		p_mc[0][t1] = self[t1];
+		p_mc[1][t1] = alpha[t1];
+		p_mc[1][t1+num_ele] = beta[t1];
+		p_mc[1][t1+2*num_ele] = gamma[t1];
+		p_mc[2][t1] = delta[t1];
+	}
+	// element pair
+	int tmp=0;
+	for(size_t t1=0; t1<num_ele; t1++)
+	for(size_t t2=t1; t2<num_ele; t2++)
+	{
+		p_mc[3][tmp] = n_b[t1][t2];
+		p_mc[4][tmp] = r_b[t1][t2];
+		p_mc[5][tmp] = l_b[t1][t2];
+		tmp++;
+	}
+	// neighbor pair
+	for(size_t t1=0; t1<num_ele; t1++)
+	for(size_t t2=0; t2<n_max[t1]; t2++)
+	{
+		p_mc[6+t1][t2] = theta_b[t1][t2];
+		p_mc[6+num_ele+t1][t2] = phi_b[t1][t2];
+	}
+}
+
+void bvvv :: receive_param_from_mc(vector< vector<double> >& p_mc)
+{
+	// single site parameters
+	for(size_t t1=0; t1<num_ele; t1++)
+	{
+		self[t1] = p_mc[0][t1];
+		alpha[t1] = p_mc[1][t1];
+		beta[t1] = p_mc[1][t1+num_ele];
+		gamma[t1] = p_mc[1][t1+2*num_ele];
+		delta[t1] = p_mc[2][t1];
+	}
+	// element pair
+	int tmp=0;
+	for(size_t t1=0; t1<num_ele; t1++)
+	for(size_t t2=t1; t2<num_ele; t2++)
+	{
+		n_b[t1][t2] = p_mc[3][tmp];
+		r_b[t1][t2] = p_mc[4][tmp];
+		l_b[t1][t2] = p_mc[5][tmp];
+		tmp++;
+	}
+	// neighbor pair
+	for(size_t t1=0; t1<num_ele; t1++)
+	for(size_t t2=0; t2<n_max[t1]; t2++)
+	{
+		theta_b[t1][t2] = p_mc[6+t1][t2];
+		phi_b[t1][t2] = p_mc[6+num_ele+t1][t2];
+	}
+}
+
 void bvvv :: print()
 {
 	cout<<"Number of elements        : "<<num_ele<<endl;

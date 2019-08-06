@@ -40,10 +40,11 @@ private:
 public:
 	void init(int Num_ele, vector<int>& N_max);
 	void assign(int Ele,double Self, double Alpha, double Beta, double Gamma, double Delta, vector<double>& N_b, vector<double>& R_b, vector<double>& L_b, vector<double>& Theta_b, vector<double>& Phi_b);
+	double ene(int ele0, vector<int>& ele1, vector<vec>& bond);
+	void init_param_to_mc(vector< vector<double> >& p_mc);
 	void send_param_to_mc(vector< vector<double> >& p_mc);
 	void receive_param_from_mc(vector< vector<double> >& p_mc);
-	double ene(int ele0, vector<int>& ele1, vector<vec>& bond);
-
+	
 	void print();
 };
 #endif
