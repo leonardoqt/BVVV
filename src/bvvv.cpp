@@ -10,6 +10,7 @@ void bvvv :: init(int Num_ele, vector<int>& N_max)
 	}
 	num_ele = Num_ele;
 	n_max.resize(Num_ele);
+	self.resize(Num_ele);
 	alpha.resize(Num_ele);
 	beta.resize(Num_ele);
 	gamma.resize(Num_ele);
@@ -33,7 +34,7 @@ void bvvv :: init(int Num_ele, vector<int>& N_max)
 	}
 }
 
-void bvvv :: assign(int Ele, double Alpha, double Beta, double Gamma, double Delta, vector<double>& N_b, vector<double>& R_b, vector<double>& L_b, vector<double>& Theta_b, vector<double>& Phi_b)
+void bvvv :: assign(int Ele, double Self, double Alpha, double Beta, double Gamma, double Delta, vector<double>& N_b, vector<double>& R_b, vector<double>& L_b, vector<double>& Theta_b, vector<double>& Phi_b)
 {
 	// guard
 	if (Ele >= num_ele)
@@ -42,6 +43,7 @@ void bvvv :: assign(int Ele, double Alpha, double Beta, double Gamma, double Del
 		exit(EXIT_FAILURE);
 	}
 	//
+	self[Ele] = Self;
 	alpha[Ele] = Alpha;
 	beta[Ele]  = Beta;
 	gamma[Ele] = Gamma;
@@ -106,6 +108,8 @@ void bvvv :: print()
 	cout<<"Number of elements        : "<<num_ele<<endl;
 	cout<<"Maximum N of each element : "<<endl;
 	for(size_t t1=0; t1<num_ele; t1++) cout<<'\t'<<n_max[t1]; cout<<endl;
+	cout<<"Self    :"<<endl;
+	for(size_t t1=0; t1<num_ele; t1++) cout<<'\t'<<self[t1]; cout<<endl;
 	cout<<"Alpha   :"<<endl;
 	for(size_t t1=0; t1<num_ele; t1++) cout<<'\t'<<alpha[t1]; cout<<endl;
 	cout<<"Beta    :"<<endl;
