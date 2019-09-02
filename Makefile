@@ -12,6 +12,7 @@ OBJ   = $(patsubst $(SDIR)/%.cpp,$(ODIR)/%.o,$(SRC))
 
 bvvv.x : $(OBJ)
 	$(CXX) -o $@ $^ $(CFLAG) $(CLIB)
+	ln -s ../$@ test/$@
 
 $(ODIR)/%.o : $(SDIR)/%.cpp $(DEPS) | $(ODIR)/.
 	$(CXX) -c -o $@ $< $(CFLAG) $(CLIB)
