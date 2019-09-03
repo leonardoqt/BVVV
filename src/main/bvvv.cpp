@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstdlib>
 #include "bvvv.h"
 
 void bvvv :: init(int Num_ele, vector<int>& N_max)
@@ -62,6 +63,29 @@ void bvvv :: assign(int Ele, double Self, double Alpha, double Beta, double Gamm
 		phi_b[Ele] = Phi_b;
 	}
 	
+}
+
+void bvvv :: rand_self_assign()
+{
+	for(size_t t1=0; t1<num_ele; t1++)
+	{
+		self[t1] = -100;
+		alpha[t1] = 1;
+		beta[t1] = 1;
+		gamma[t1] = 1;
+		delta[t1] = 1;
+		for(size_t t2=t1; t2<num_ele; t2++)
+		{
+			n_b[t1][t2] = 1;
+			r_b[t1][t2] = 3;
+			l_b[t1][t2] = 1;
+		}
+		for(size_t t2=0; t2<n_max[t1]; t2++)
+		{
+			theta_b[t1][t2] = rand()/(double)RAND_MAX * M_PI;
+			phi_b[t1][t2] = rand()/(double)RAND_MAX * M_PI * 2;
+		}
+	}
 }
 
 double bvvv :: ene(int ele0, vector<int>& ele1, vector<vec>& bond)
@@ -163,7 +187,7 @@ void bvvv :: send_param_to_mc(vector< vector<double> >& p_mc)
 	}
 }
 
-void bvvv :: receive_param_from_mc(vector< vector<double> >& p_mc)
+void bvvv :: read_param_from_mc(vector< vector<double> >& p_mc)
 {
 	// single site parameters
 	for(size_t t1=0; t1<num_ele; t1++)

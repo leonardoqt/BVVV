@@ -1,116 +1,119 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include <vector>
 #include <vec.h>
+#include <mc.h>
 #include "cell.h"
 #include "bvvv.h"
 
 using namespace std;
 
+/*
+	input structure:
+	name of structure file
+	number of structures
+	rmax 
+	number of elements
+	max number of neighbors
+	mc checkpoint
+	mc period
+*/
+
 int main()
 {
-	/*
-	ifstream in;
-	cell sys[1011];
-	in.open("example.xsf");
-	for(size_t t1=0; t1<1011; t1++)
-	{
-		sys[t1].init(2,3.5);
-		sys[t1].read_datafile(in);
-		sys[t1].gen_nei_list();
-	}
-	sys[1010].print();
-	return 0;
-	*/
-	//----------------------cell assignement test-------------------------
-	///*
-	ifstream in;
-	vec param[3];
+	// inputs
+	ifstream in, xsf;
+	// xsf related variables
+	string name_xsf;
+	int num_xsf;
+	// cell related variables
+	vector<cell> sys;
 	int num_ele;
-	vector<int> num_atom;
 	double r_max;
-	cell sys1;
-	int ttype;
-	vec tpos;
-	
-	in.open("in.dat");
-	in>>param[0]>>param[1]>>param[2];
-	in>>num_ele;
-	num_atom.resize(num_ele);
+	vector<int> max_nei;
+	// bvvv related variables
+	bvvv model;
+	double err_tot;
+	// mc related variables
+	mc mc_control;
+	thermo_profile temperature;
+	int checkpoint;
+	int period;
+	int num_param_kind;
+	vector <int> num_param_each;
+	vector <double> lambda;
+	vector<vector <double> > param;
+	double T_max, T_min;
+	// tmporary variables
+	double ene_tmp;
+
+	//====== inputs ======
+	// read from input file
+	in.open("bvvv.in");
+	in>>name_xsf>>num_xsf>>r_max>>num_ele;
+	max_nei.resize(num_ele);
 	for(size_t t1=0; t1<num_ele; t1++)
-		in>>num_atom[t1];
-	in>>r_max;
-	//
-	sys1.init(num_ele,num_atom,r_max);
-	//
-	sys1.read_param(param);
-	//
-	for(size_t t1=0; t1<sys1.num_atom; t1++)
+		in>>max_nei[t1];
+	in>>checkpoint>>period;
+	in.close();
+
+	// read from xsf file
+	xsf.open(name_xsf);
+	sys.resize(num_xsf);
+	for(auto& m1 : sys)
 	{
-		in>>ttype>>tpos;
-		sys1.read_atom_pos(t1,ttype,tpos);
+		m1.init(num_ele,r_max);
+		m1.read_datafile(xsf);
+		m1.gen_nei_list();
 	}
-	//
-	sys1.gen_nei_list();
-//	sys1.print();
-	//*/
-	//---------------------BVVV assignment test----------------------
-	///*
-	bvvv model1;
-	vector<int> n_max(num_ele);
-	vector<double> c1(num_ele),c2(num_ele),c3(num_ele),d1,d2;
-	for(size_t t1=0; t1<num_ele; t1++)
-		in>>n_max[t1];
-	model1.init(num_ele,n_max);
-	for(size_t t1=0; t1<num_ele; t1++)
+	xsf.close();
+	//====== internal initialization ======
+	// initialize bvvv
+	model.init(num_ele,max_nei);
+	model.rand_self_assign();
+	model.init_param_to_mc(param);
+	model.send_param_to_mc(param);
+
+	// initialize mc
+	// get number of parameters and initial lambda
+	num_param_kind = param.size();
+	num_param_each.resize(num_param_kind);
+	lambda.resize(num_param_kind);
+	for(size_t t1=0; t1<num_param_kind; t1++)
 	{
-		for(size_t t2=0; t2<num_ele; t2++)
-		{
-			c1[t2] = t1+1+1.0*t2;
-			c2[t2] = t1+1+2.0*t2;
-			c3[t2] = t1+1+3.0*t2;
-		}
-		d1.resize(n_max[t1]);
-		d2.resize(n_max[t1]);
-		for(size_t t2=0; t2<n_max[t1]; t2++)
-		{
-			d1[t2] = t1+0.4*t2;
-			d2[t2] = t1+0.5*t2;
-		}
-		if(t1 == 1)
-		{
-			c1[2] = 1;
-			c2[2] = 2/1.18232155679;
-			c3[2] = 1;
-			d1[0] = 0;
-			d1[1] = 1;
-			d1[2] = d1[3] = d1[4] = d1[5] = 0.5;
-			d2[0] = d2[1] = d2[2] = 0;
-			d2[3] = 0.25;
-			d2[4] = 0.5;
-			d2[5] = 0.75;
-			model1.assign(1,1,0,0,1,1,c1,c2,c3,d1,d2);
-		}
-		else
-			model1.assign(t1,t1,t1+1,t1+2,t1+3,t1+4,c1,c2,c3,d1,d2);
+		num_param_each[t1] = param[t1].size();
+		lambda[t1] = 0.2;
 	}
-	model1.print();
-	//*/
-	//-----------------------BVVV ene test-----------------------
-	///*
-	int e_t;
-	vector<int> e_t2;
-	vector<vec> p_t;
-	vector< vector<double> > mc_tmp;
-	sys1.retrive_nei(1,e_t,e_t2,p_t);
-	cout<<model1.ene(e_t,e_t2,p_t)<<endl;
-	model1.init_param_to_mc(mc_tmp);
-	model1.send_param_to_mc(mc_tmp);
-	model1.receive_param_from_mc(mc_tmp);
-	cout<<"---"<<endl;
-	model1.print();
-	cout<<model1.ene(e_t,e_t2,p_t)<<endl;
-	sys1.get_ene_bvvv(model1);
-	//*/
+	lambda[0] = 50;
+	// get initial energy
+	err_tot = 0;
+	for(size_t t1=0; t1<num_xsf; t1++)
+	{
+		sys[t1].get_ene_bvvv(model);
+		err_tot += (sys[t1].ene_bvvv-sys[t1].ene_dft)*(sys[t1].ene_bvvv-sys[t1].ene_dft);
+	}
+	err_tot/=num_xsf;
+	// initialize
+	mc_control.init(num_param_kind,checkpoint,num_param_each,lambda,param,err_tot);
+	temperature.init(period,err_tot/10,0.001);
+
+	// run mc
+	for(size_t t1=0; t1<10*period; t1++)
+	{
+		mc_control.gen_param_kind(param);
+		model.read_param_from_mc(param);
+		err_tot = 0;
+		for(auto& m2 : sys)
+		{
+			m2.get_ene_bvvv(model);
+			err_tot += (m2.ene_bvvv-m2.ene_dft)*(m2.ene_bvvv-m2.ene_dft);
+		}
+		err_tot/=num_xsf;
+		temperature.gen_T(t1,"mixed");
+		mc_control.evaluate(temperature,err_tot);
+		cout<<t1<<'\t'<<err_tot<<endl;
+	}
+
 	return 0;
 }

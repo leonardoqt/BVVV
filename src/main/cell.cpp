@@ -162,7 +162,7 @@ void cell :: get_ene_bvvv(bvvv& model)
 	for(size_t t1=0; t1<num_atom; t1++)
 	{
 		ene_bvvv += model.ene(type_atom[t1],ele_nei[t1],pos_nei[t1]);
-		cout<<t1<<'\t'<<ene_bvvv<<endl;
+		//cout<<t1<<'\t'<<ene_bvvv<<endl;
 	}
 }
 
@@ -170,6 +170,7 @@ void cell :: print()
 {
 	cout<<"Cell parameter     : "<<endl<<param[0]<<endl<<param[1]<<endl<<param[2]<<endl;
 	cout<<"Volume             : "<<vol<<endl;
+	cout<<"Energy from DFT    : "<<ene_dft<<endl;
 	cout<<"Number of elements : "<<num_ele<<endl;
 	cout<<"Number of atoms    : "<<num_atom<<endl;
 	cout<<"Atom lists         : "<<endl;

@@ -5,7 +5,7 @@ TDIR  = $(ROOT_DIR)/test
 
 CXX   = g++
 CFLAG = -std=c++11
-CLIB  = -lvec
+CLIB  = -lvec -lmc
  
 DEPS  = $(shell ls $(SDIR)/*.h)
 SRC   = $(shell ls $(SDIR)/*.cpp)
