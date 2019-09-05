@@ -43,6 +43,8 @@ int main()
 	int num_param_kind;
 	vector <int> num_param_each;
 	vector <double> lambda;
+	vector <double> max_param;
+	vector <double> min_param;
 	vector<vector <double> > param;
 	double T_max, T_min;
 	// tmporary variables
@@ -80,12 +82,18 @@ int main()
 	num_param_kind = param.size();
 	num_param_each.resize(num_param_kind);
 	lambda.resize(num_param_kind);
+	max_param.resize(num_param_kind);
+	min_param.resize(num_param_kind);
 	for(size_t t1=0; t1<num_param_kind; t1++)
 	{
 		num_param_each[t1] = param[t1].size();
 		lambda[t1] = 0.2;
+		max_param[t1] = 2*3.1416;
+		min_param[t1] = 0;
 	}
 	lambda[0] = 50;
+	max_param[0] = -100;
+	min_param[0] = -2000;
 	// get initial energy
 	err_tot = 0;
 	for(size_t t1=0; t1<num_xsf; t1++)
@@ -95,7 +103,7 @@ int main()
 	}
 	err_tot/=num_xsf;
 	// initialize
-	mc_control.init(num_param_kind,checkpoint,num_param_each,lambda,param,err_tot);
+	mc_control.init(num_param_kind,checkpoint,num_param_each,lambda,max_param,min_param,param,err_tot);
 	temperature.init(period,err_tot/10,0.001);
 
 	// run mc
